@@ -40,4 +40,24 @@ class LookingGlass:
             print("cannot divide zero")
             return True
     
+import contextlib
+
+@contextlib.contextmanager
+def lookingglass():
+    import sys
+    origin_write=sys.stdout.write
+
+    def reverse_write(text):
+        return origin_write(text[::-1])
+    sys.stdout.write=reverse_write
+    msg=""
+    try:
+        yield "ABCDEFG"
+    except ZeroDivisionError:
+        print("can not divide zero")
+    finally:
+        sys.stdout.write=origin_write
+        if msg:
+            print(msg)
+
 
