@@ -15,3 +15,6 @@ class Sentence:
 
     def __repr__(self):
         return "Sentence :{}".format(reprlib.repr(self.text))
+    
+    def __iter__(self):
+        return iter(self.word)
