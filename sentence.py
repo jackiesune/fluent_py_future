@@ -17,4 +17,12 @@ class Sentence:
         return "Sentence :{}".format(reprlib.repr(self.text))
     
     def __iter__(self):
-        return iter(self.word)
+        '''or 
+        for match in REWORD.finditer(self.text):
+            yield match.group()减少了一个列表
+            
+            or
+        return (match.group() for match in REWORD.findall(self.text0)) 直接返回生成器'''
+        for i in self.word:
+            yield i
+
