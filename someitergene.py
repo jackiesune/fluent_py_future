@@ -20,3 +20,24 @@ def gen_am(start,step,end=None):
     if end is not None:
         ap_gen=itertools.takewhile(lambda n:n<end,ap_gen)
     return ap_gen
+
+
+class LookingGlass:
+
+    def __enter__(self):
+        import sys
+        self.origin_write=sys.stdout.write
+        sys.stdout.write=self.reverse_write
+        return "ABCDEFG"
+
+    def reverse_write(self,text):
+        return self.origin_write(text[::-1])
+
+    def __exit__(self,exc_type,exc_value,traceback):
+        import sys
+        sys.stdout.write=self.origin_write
+        if exc_type is ZeroDivisionError:
+            print("cannot divide zero")
+            return True
+    
+
