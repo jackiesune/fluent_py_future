@@ -1,3 +1,6 @@
+from description import co_des
+
+@co_des
 def co_average():
     total=0
     count=0
@@ -8,4 +11,5 @@ def co_average():
         total+=term
         count+=1
         average=total/count
+
 
