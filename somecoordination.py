@@ -13,3 +13,19 @@ def co_average():
         average=total/count
 
 
+
+#让协程抛出指定异常，并处理。
+class DemoException(Exception):
+    '''自定义异常'''
+
+def demo_finally():
+    try:
+        while True:
+            try:
+                x=yield
+            except DemoException:
+                print("**DemoException has been handled**")
+            else:
+                print("coroutine receiverd x:",x)
+    finally:
+        print("coroutine end")
