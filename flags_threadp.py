@@ -21,12 +21,27 @@ def get_flag(cc):
     url='{}/{cc}/{cc}.gif'.format(BASE_URL,cc=cc.lower())
     print("request {}".format(cc))
     resp=requests.get(url)
+    if resp.status_code != 200:
+        resp.raise_for_status()
     print("get {} state{}".format(cc,resp.status_codes))
     return resp.content
 
 def down_one(cc):
-    image=get_flag(cc)
-    save_flags(image,cc.lower()+'.gif')
+    try:
+        image=get_flag(cc)
+    except requests.exceptions.HTTPError as exc:
+        res=exc.response
+        if res.status_code == 404:
+            status = HTTPStatus.not_found
+            msg = 'not found'
+        else:
+            raise
+    else:
+        save_flags(image,cc.lower()+'.gif')
+        status = HTTPStatus.ok
+        msg='ok'
+ #   if verbose:
+ #       print(cc,msg)
     return cc
 
 def show(text):
