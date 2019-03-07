@@ -13,7 +13,7 @@ DEST_DIR='downloads'
 MAX_WORKERS=3
 
 def save_flags(img,filename):
-    path=os.path.join(BEST_DIR,filename)
+    path=os.path.join(BASE_URL,filename)
     with open(path,'wb') as f :
         f.write(img)
 
@@ -26,20 +26,34 @@ def get_flag(cc):
 
 def down_one(cc):
     image=get_flag(cc)
-    show(cc)
-    save_flag(image,cc.lower()+'.gif')
+    save_flags(image,cc.lower()+'.gif')
     return cc
 
 def show(text):
-    print(text,end=' ')
+    print(text)
     sys.stdout.flush()
 
 def download_many(cc_list):
-    workers=min(MAX_WORKERS,len(cc_list))
-    with futures.ThreadPoolExecutor(workers) as executor:
-        res=executor.map(down_one,sorted(cc_list))
+#    workers=min(MAX_WORKERS,len(cc_list))
+#    with futures.ThreadPoolExecutor(workers) as executor:
+#        res=executor.map(down_one,sorted(cc_list))
+    with futures.ThreadPoolExecutor(max_workers=4) as executor:
+        lfutures=[]
+        for cc in cc_list:
+            future=executor.submit(down_one,cc)
+            lfutures.append(future)
+            msg='scheduled for {} :{}'
+            print(msg.format(cc,future))
 
-    return len(list(res))
+        results=[]
+        for resfuture in futures.as_completed(lfutures):
+            res=resfuture.result()
+            results.append(res)
+            msg='{} result :{!r}'
+            print(msg.format(resfuture,res))
+
+
+    return len(results)
 
 def main(download_many):
     t0=time.time()
